@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tic Tac Toe</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #050505;
+            color: white;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .game {
+            width: 400px;
+            padding: 25px;
+
+            background: #0b0b0b;
+            border: 2px solid #168cff;
+            border-radius: 15px;
+
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #168cff;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+
+        /* TURN */
+
+        .turn {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        #player {
+            color: #168cff;
+            font-weight: bold;
+        }
+
+        /* BOARD */
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            height: 100px;
+
+            background: #050505;
+            border: 2px solid #168cff;
+            border-radius: 8px;
+
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .cell:hover {
+            background: #168cff;
+            color: #000;
+        }
+
+        .cell.x {
+            color: #168cff;
+        }
+
+        .cell.o {
+            color: white;
+        }
+
+        /* WINNING BOX */
+
+        .cell.winner {
+            background: #168cff;
+            color: white;
+            animation: winnerBox 0.5s infinite alternate;
+        }
+
+        @keyframes winnerBox {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.08);
+            }
+        }
+
+        /* MESSAGE */
+
+        #message {
+            height: 35px;
+            margin-bottom: 15px;
+
+            color: #168cff;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* RESTART BUTTON */
+
+        .restart {
+            width: 100%;
+
+            padding: 12px;
+
+            background: #168cff;
+            color: white;
+
+            border: none;
+            border-radius: 8px;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .restart:hover {
+            background: white;
+            color: #000;
+        }
+
+
+        /* CONFETTI */
+
+        .confetti {
+            position: fixed;
+
+            width: 10px;
+            height: 10px;
+
+            top: -20px;
+
+            animation: fall 3s linear forwards;
+
+            z-index: 999;
+        }
+
+        @keyframes fall {
+
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+
+        }
+
+
+        /* WIN POPUP */
+
+        .win-popup {
+            position: fixed;
+
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%) scale(0);
+
+            background: #050505;
+
+            border: 2px solid #168cff;
+
+            border-radius: 15px;
+
+            padding: 30px 45px;
+
+            text-align: center;
+
+            z-index: 1000;
+
+            transition: 0.3s;
+        }
+
+        .win-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .win-popup h2 {
+            color: #168cff;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .win-popup p {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .popup-btn {
+            background: #168cff;
+            color: white;
+
+            border: none;
+            border-radius: 7px;
+
+            padding: 10px 20px;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .popup-btn:hover {
+            background: white;
+            color: black;
+        }
+
+
+        @media (max-width: 450px) {
+
+            .game {
+                width: 90%;
+            }
+
+            .cell {
+                height: 80px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <div class="game">
+
+        <h1>TIC TAC TOE</h1>
+
+        <p class="subtitle">
+            X vs O • Classic Game
+        </p>
+
+
+        <div class="turn">
+
+            Turn for
+            <span id="player">X</span>
+
+        </div>
+
+
+        <div class="board">
+
+            <button class="cell" data-index="0"></button>
+            <button class="cell" data-index="1"></button>
+            <button class="cell" data-index="2"></button>
+
+            <button class="cell" data-index="3"></button>
+            <button class="cell" data-index="4"></button>
+            <button class="cell" data-index="5"></button>
+
+            <button class="cell" data-index="6"></button>
+            <button class="cell" data-index="7"></button>
+            <button class="cell" data-index="8"></button>
+
+        </div>
+
+
+        <div id="message"></div>
+
+
+        <button class="restart" onclick="restartGame()">
+
+            RESTART GAME
+
+        </button>
+
+    </div>
+
+
+    <!-- WIN POPUP -->
+
+    <div class="win-popup" id="winPopup">
+
+        <h2>🎉 WINNER! 🎉</h2>
+
+        <p id="winnerText"></p>
+
+        <button class="popup-btn" onclick="restartGame()">
+
+            PLAY AGAIN
+
+        </button>
+
+    </div>
+
+
+
+    <script>
+
+        const cells = document.querySelectorAll(".cell");
+
+        const playerDisplay =
+            document.getElementById("player");
+
+        const message =
+            document.getElementById("message");
+
+        const winPopup =
+            document.getElementById("winPopup");
+
+        const winnerText =
+            document.getElementById("winnerText");
+
+
+        let board = [
+            "", "", "",
+            "", "", "",
+            "", "", ""
+        ];
+
+
+        let currentPlayer = "X";
+
+        let gameActive = true;
+
+
+        /* WINNING COMBINATIONS */
+
+        const winningPatterns = [
+
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+
+            [0, 4, 8],
+            [2, 4, 6]
+
+        ];
+
+
+        /* CELL CLICK */
+
+        cells.forEach(function(cell) {
+
+            cell.addEventListener("click", function() {
+
+                const index =
+                    this.dataset.index;
+
+
+                if (
+                    board[index] !== "" ||
+                    !gameActive
+                ) {
+
+                    return;
+
+                }
+
+
+                board[index] =
+                    currentPlayer;
+
+
+                this.textContent =
+                    currentPlayer;
+
+
+                if (currentPlayer === "X") {
+
+                    this.classList.add("x");
+
+                } else {
+
+                    this.classList.add("o");
+
+                }
+
+
+                checkWinner();
+
+            });
+
+        });
+
+
+
+        /* CHECK WINNER */
+
+        function checkWinner() {
+
+            for (
+                let pattern of winningPatterns
+            ) {
+
+                const a = pattern[0];
+
+                const b = pattern[1];
+
+                const c = pattern[2];
+
+
+                if (
+
+                    board[a] !== "" &&
+
+                    board[a] === board[b] &&
+
+                    board[b] === board[c]
+
+                ) {
+
+
+                    /* Highlight winning boxes */
+
+                    cells[a].classList.add("winner");
+
+                    cells[b].classList.add("winner");
+
+                    cells[c].classList.add("winner");
+
+
+                    gameActive = false;
+
+
+                    message.textContent =
+                        "Player " +
+                        currentPlayer +
+                        " Wins!";
+
+
+                    /* SHOW POPUP */
+
+                    winnerText.textContent =
+                        "Player " +
+                        currentPlayer +
+                        " won the game!";
+
+
+                    winPopup.classList.add("show");
+
+
+                    /* CONFETTI */
+
+                    createConfetti();
+
+
+                    return;
+
+                }
+
+            }
+
+
+            /* DRAW */
+
+            if (!board.includes("")) {
+
+                message.textContent =
+                    "It's a Draw!";
+
+                gameActive = false;
+
+                return;
+
+            }
+
+
+            /* CHANGE PLAYER */
+
+            if (currentPlayer === "X") {
+
+                currentPlayer = "O";
+
+            } else {
+
+                currentPlayer = "X";
+
+            }
+
+
+            playerDisplay.textContent =
+                currentPlayer;
+
+        }
+
+
+
+        /* CONFETTI FUNCTION */
+
+        function createConfetti() {
+
+            for (
+                let i = 0;
+                i < 80;
+                i++
+            ) {
+
+                const confetti =
+                    document.createElement("div");
+
+
+                confetti.classList.add(
+                    "confetti"
+                );
+
+
+                confetti.style.left =
+                    Math.random() * 100 + "vw";
+
+
+                confetti.style.background =
+                    Math.random() > 0.5
+                        ? "#168cff"
+                        : "#ffffff";
+
+
+                confetti.style.animationDuration =
+                    (Math.random() * 2 + 2) + "s";
+
+
+                confetti.style.width =
+                    (Math.random() * 8 + 5) + "px";
+
+
+                confetti.style.height =
+                    (Math.random() * 8 + 5) + "px";
+
+
+                document.body.appendChild(
+                    confetti
+                );
+
+
+                setTimeout(function() {
+
+                    confetti.remove();
+
+                }, 4000);
+
+            }
+
+        }
+
+
+
+        /* RESTART GAME */
+
+        function restartGame() {
+
+            board = [
+                "", "", "",
+                "", "", "",
+                "", "", ""
+            ];
+
+
+            currentPlayer = "X";
+
+            gameActive = true;
+
+
+            playerDisplay.textContent =
+                "X";
+
+
+            message.textContent =
+                "";
+
+
+            winPopup.classList.remove(
+                "show"
+            );
+
+
+            cells.forEach(function(cell) {
+
+                cell.textContent = "";
+
+                cell.classList.remove("x");
+
+                cell.classList.remove("o");
+
+                cell.classList.remove("winner");
+
+            });
+
+
+            /* Remove old confetti */
+
+            document
+                .querySelectorAll(".confetti")
+                .forEach(function(item) {
+
+                    item.remove();
+
+                });
+
+        }
+
+    </script>
+
+</body>
+</html>
